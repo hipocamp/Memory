@@ -167,6 +167,11 @@
   </div>
 
   <script>
+    // Borrado preventivo de localStorage para evitar bloqueos por falta de espacio
+    try {
+      localStorage.removeItem('proride_riders_custom');
+    } catch(e) {}
+
     class SoundController {
       constructor() {
         this.ctx = null;
@@ -245,56 +250,32 @@
 
     const DEFAULT_AVATAR = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="%23f43f5e" fill-opacity="0.25" stroke="%23f43f5e" stroke-width="3"/><circle cx="32" cy="22" r="10" fill="%23f43f5e"/><path d="M16 50C16 41.1634 23.1634 34 32 34C40.8366 34 48 41.1634 48 50V52H16V50Z" fill="%23f43f5e"/></svg>`;
 
-    // Rutes absolutes directes a GitHub Pages
+    // Datos oficiales apuntando a las imágenes de GitHub
     const DEFAULT_RIDERS = [
-      { name: "Òliver Serra", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Martí Collell", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Pau Rodoreda", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Oriol Fornell", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Lluc Bayés", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Martí Miró", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Héctor González", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Pol Ruz", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Axel Serrano", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
+      { name: "Òliver Serra", photo: "https://hipocamp.github.io/Memory/OliverS.png" },
+      { name: "Martí Collell", photo: "https://hipocamp.github.io/Memory/MartiC.png" },
+      { name: "Pau Rodoreda", photo: "https://hipocamp.github.io/Memory/PauR.png" },
+      { name: "Oriol Fornell", photo: "https://hipocamp.github.io/Memory/OriolF.png" },
+      { name: "Lluc Bayés", photo: "https://hipocamp.github.io/Memory/LlucB.png" },
+      { name: "Martí Miró", photo: "https://hipocamp.github.io/Memory/MartiM.png" },
+      { name: "Héctor González", photo: "https://hipocamp.github.io/Memory/HectorG.png" },
+      { name: "Pol Ruz", photo: "https://hipocamp.github.io/Memory/PolR.png" },
+      { name: "Axel Serrano", photo: "https://hipocamp.github.io/Memory/AxelS.png" },
       { name: "Miquel Martín", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Pau Enrique", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Marc Danti", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Ángel Rojo", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Adrià Vilanova", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Bernat Muñoz", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Eloi Vilaró", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Oriol Barniol", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Roc Andreu", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Marc Quatrecasas", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Josep Jufré", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Abraham Aguilera", photo: "https://hipocamp.github.io/Memory/MiquelM.png" }
+      { name: "Pau Enrique", photo: "https://hipocamp.github.io/Memory/PauE.png" },
+      { name: "Marc Danti", photo: "https://hipocamp.github.io/Memory/MarcD.png" },
+      { name: "Ángel Rojo", photo: "https://hipocamp.github.io/Memory/AngelR.png" },
+      { name: "Adrià Vilanova", photo: "https://hipocamp.github.io/Memory/AdriaV.png" },
+      { name: "Bernat Muñoz", photo: "https://hipocamp.github.io/Memory/BernatM.png" },
+      { name: "Eloi Vilaró", photo: "https://hipocamp.github.io/Memory/EloiV.png" },
+      { name: "Oriol Barniol", photo: "https://hipocamp.github.io/Memory/OriolB.png" },
+      { name: "Roc Andreu", photo: "https://hipocamp.github.io/Memory/RocA.png" },
+      { name: "Marc Quatrecasas", photo: "https://hipocamp.github.io/Memory/MarcQ.png" },
+      { name: "Joan Pujol", photo: "https://hipocamp.github.io/Memory/JoanP.png" },
+      { name: "David López", photo: "https://hipocamp.github.io/Memory/DavidL.png" }
     ];
 
-    let ridersData = [];
-
-    function loadRidersData() {
-      const saved = localStorage.getItem('proride_riders_custom');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          // Auto-neteja de memòria vella si no té les rutes directes de GitHub
-          if (parsed.length < 21 || !parsed[0].photo.includes('hipocamp.github.io')) {
-            localStorage.removeItem('proride_riders_custom');
-            ridersData = JSON.parse(JSON.stringify(DEFAULT_RIDERS));
-          } else {
-            ridersData = parsed;
-          }
-        } catch(e) {
-          ridersData = JSON.parse(JSON.stringify(DEFAULT_RIDERS));
-        }
-      } else {
-        ridersData = JSON.parse(JSON.stringify(DEFAULT_RIDERS));
-      }
-    }
-
-    function saveRidersData() {
-      localStorage.setItem('proride_riders_custom', JSON.stringify(ridersData));
-    }
+    let ridersData = JSON.parse(JSON.stringify(DEFAULT_RIDERS));
 
     let cards = [];
     let selectedIndices = [];
@@ -470,7 +451,7 @@
           });
 
           currentStreak = 0;
-          streakDisplay.textContent = '0/21';
+          streakDisplay.textContent = '0/19';
 
           selectedIndices = [];
           isProcessing = false;
@@ -489,25 +470,8 @@
       document.getElementById('final-time').textContent = finalTimeStr;
       document.getElementById('final-resets').textContent = resetCount;
 
-      const prevBest = localStorage.getItem('proride_best');
-      if (!prevBest || elapsedTime < parseInt(prevBest, 10)) {
-        localStorage.setItem('proride_best', elapsedTime);
-        bestDisplay.textContent = finalTimeStr;
-      }
-
       victoryModal.classList.remove('opacity-0', 'pointer-events-none');
       document.getElementById('victory-card').classList.remove('scale-95');
-    }
-
-    function loadBestScore() {
-      const prevBest = localStorage.getItem('proride_best');
-      if (prevBest) {
-        const totalSecs = parseInt(prevBest, 10) / 1000;
-        const mins = String(Math.floor(totalSecs / 60)).padStart(2, '0');
-        const secs = String(Math.floor(totalSecs % 60)).padStart(2, '0');
-        const tenths = Math.floor((parseInt(prevBest, 10) % 1000) / 100);
-        bestDisplay.textContent = `${mins}:${secs}.${tenths}`;
-      }
     }
 
     function renderSettingsList() {
@@ -563,14 +527,12 @@
           ridersData[idx].name = input.value.trim();
         }
       });
-      saveRidersData();
       settingsModal.classList.add('opacity-0', 'pointer-events-none');
       initGameSession();
     });
 
     document.getElementById('btn-reset-default').addEventListener('click', () => {
       if (confirm("Vols restablir els noms i imatges per defecte?")) {
-        localStorage.removeItem('proride_riders_custom');
         ridersData = JSON.parse(JSON.stringify(DEFAULT_RIDERS));
         renderSettingsList();
       }
@@ -588,8 +550,6 @@
     });
 
     window.onload = () => {
-      loadRidersData();
-      loadBestScore();
       initGameSession();
     };
   </script>
