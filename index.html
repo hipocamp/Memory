@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="ca" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ProRide 2025-26</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+
+    .backface-hidden {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+
+    .card-inner {
+      transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+    }
+
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    @keyframes shakeAnimation {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+
+    .shake {
+      animation: shakeAnimation 0.4s ease-in-out;
+    }
+
+    /* Custom Scrollbar for Settings */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col justify-between items-center bg-slate-950 text-slate-100 p-2 sm:p-4 font-sans overflow-x-hidden">
+
+  <!-- Header -->
+  <header class="w-full max-w-lg text-center pt-2 pb-1">
+    <div class="flex items-center justify-center gap-2">
+      <span class="inline-block p-1.5 bg-amber-500/20 text-amber-400 rounded-lg border border-amber-500/30">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      </span>
+      <h1 class="text-xl sm:text-2xl font-black tracking-tight text-white">PRORIDE 2025-26</h1>
+    </div>
+    <p class="text-xs text-slate-400 mt-1">Troba les 18 parelles! Si falles, es tanca tot el panell però les posicions es mantenen.</p>
+  </header>
+
+  <!-- Dashboard / Stats -->
+  <div class="w-full max-w-lg grid grid-cols-4 gap-2 my-2 text-center">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-2 flex flex-col items-center justify-center">
+      <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Temps</span>
+      <span id="timer-display" class="text-base sm:text-lg font-extrabold font-mono text-cyan-400">00:00.0</span>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-2 flex flex-col items-center justify-center">
+      <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Ràtxa</span>
+      <span id="streak-display" class="text-base sm:text-lg font-extrabold text-emerald-400">0/18</span>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-2 flex flex-col items-center justify-center">
+      <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Errors</span>
+      <span id="resets-display" class="text-base sm:text-lg font-extrabold text-rose-500">0</span>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-2 flex flex-col items-center justify-center">
+      <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Rècord</span>
+      <span id="best-display" class="text-xs sm:text-sm font-bold text-slate-300">--:--</span>
+    </div>
+  </div>
+
+  <!-- Status Banner -->
+  <div id="status-banner" class="w-full max-w-lg py-2 px-3 bg-slate-900/90 border border-slate-800 rounded-xl text-center text-xs font-semibold text-slate-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]">
+    <span>Clica una casella per iniciar el cronòmetre</span>
+  </div>
+
+  <!-- Game Grid Container -->
+  <main class="w-full max-w-lg aspect-square my-auto flex items-center justify-center p-1.5 sm:p-2 bg-slate-900/50 border border-slate-800/80 rounded-2xl shadow-2xl relative">
+    <div id="card-grid" class="w-full h-full grid grid-cols-6 grid-rows-6 gap-1.5 sm:gap-2">
+      <!-- 36 Cards generated via JS -->
+    </div>
+  </main>
+
+  <!-- Controls Footer -->
+  <footer class="w-full max-w-lg mt-2 mb-1 flex gap-2">
+    <button id="btn-restart" class="w-full py-3 px-4 bg-amber-500 hover:bg-amber-400 active:scale-[0.98] text-slate-950 font-black rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 text-sm">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      Nova Partida (Barrejar)
+    </button>
+    <button id="btn-settings" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 font-bold rounded-xl border border-slate-700 transition-all flex items-center justify-center gap-2 text-sm whitespace-nowrap">
+      <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Configurar Corredors
+    </button>
+  </footer>
+
+  <!-- Victory Modal -->
+  <div id="victory-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md text-center shadow-2xl transform scale-95 transition-transform duration-300" id="victory-card">
+      <div class="w-16 h-16 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-400">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <h2 class="text-2xl font-black text-white mb-1">VICTÒRIA PRORIDE!</h2>
+      <p class="text-xs text-slate-400 mb-4">Has trobat les 18 parelles sense cap error final.</p>
+
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 mb-6 space-y-2 text-sm">
+        <div class="flex justify-between items-center">
+          <span class="text-slate-400">Temps total:</span>
+          <span id="final-time" class="font-mono font-extrabold text-cyan-400 text-base">00:00.0</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-slate-400">Errors (Panells tancats):</span>
+          <span id="final-resets" class="font-mono font-extrabold text-rose-400 text-base">0</span>
+        </div>
+      </div>
+
+      <button id="btn-modal-restart" class="w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/20 transition-all text-sm">
+        Tornar a Jugar
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings Modal (Local Image Uploads) -->
+  <div id="settings-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 w-full max-w-xl shadow-2xl max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-lg sm:text-xl font-black text-white">Configurar Corredors (18)</h2>
+        <button id="btn-reset-default" class="text-[11px] font-bold text-amber-400 hover:underline">Restablir Valors</button>
+      </div>
+      <p class="text-xs text-slate-400 mb-4">Canvia els noms i penja les imatges PNG/JPG directament des del teu dispositiu.</p>
+
+      <div id="riders-list" class="overflow-y-auto space-y-3 pr-1 flex-1 text-xs">
+        <!-- Generated dynamically via JS -->
+      </div>
+
+      <div class="mt-4 pt-3 border-t border-slate-800 flex gap-2">
+        <button id="btn-save-settings" class="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl transition-all text-xs sm:text-sm shadow-lg shadow-amber-500/20">
+          Guardar i Reiniciar Partida
+        </button>
+        <button id="btn-close-settings" class="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl transition-all text-xs sm:text-sm">
+          Tancar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Game Engine -->
+  <script>
+    // Audio Controller (Web Audio API)
+    class SoundController {
+      constructor() {
+        this.ctx = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+      }
+
+      playClick() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(420, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(850, this.ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.05);
+      }
+
+      playMatch() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
+        osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.25);
+      }
+
+      playError() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+        osc.frequency.setValueAtTime(130, this.ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.3);
+      }
+
+      playWin() {
+        if (!this.ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.1);
+          gain.gain.setValueAtTime(0.2, this.ctx.currentTime + idx * 0.1);
+          gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + idx * 0.1 + 0.2);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(this.ctx.currentTime + idx * 0.1);
+          osc.stop(this.ctx.currentTime + idx * 0.1 + 0.2);
+        });
+      }
+    }
+
+    const sound = new SoundController();
+
+    // Default 18 Runners Data with inline SVG Vector Avatars as fallbacks
+    function createVectorAvatar(color) {
+      return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="${encodeURIComponent(color)}" fill-opacity="0.25" stroke="${encodeURIComponent(color)}" stroke-width="3"/><circle cx="32" cy="22" r="10" fill="${encodeURIComponent(color)}"/><path d="M16 50C16 41.1634 23.1634 34 32 34C40.8366 34 48 41.1634 48 50V52H16V50Z" fill="${encodeURIComponent(color)}"/></svg>`;
+    }
+
+    const DEFAULT_RIDERS = [
+      { name: "Kilian Jornet", photo: createVectorAvatar("#3b82f6") },
+      { name: "Courtney Dauwalter", photo: createVectorAvatar("#eab308") },
+      { name: "Pau Capell", photo: createVectorAvatar("#ef4444") },
+      { name: "Nuria Picas", photo: createVectorAvatar("#ec4899") },
+      { name: "Francois D'Haene", photo: createVectorAvatar("#10b981") },
+      { name: "Maude Mathys", photo: createVectorAvatar("#a855f7") },
+      { name: "Jim Walmsley", photo: createVectorAvatar("#f97316") },
+      { name: "Sheila Avilés", photo: createVectorAvatar("#06b6d4") },
+      { name: "Tòfol Castanyer", photo: createVectorAvatar("#84cc16") },
+      { name: "Emelie Forsberg", photo: createVectorAvatar("#f43f5e") },
+      { name: "Zach Miller", photo: createVectorAvatar("#6366f1") },
+      { name: "Katie Schide", photo: createVectorAvatar("#14b8a6") },
+      { name: "Tom Evans", photo: createVectorAvatar("#d97706") },
+      { name: "Ruth Croft", photo: createVectorAvatar("#8b5cf6") },
+      { name: "Stian Angermund", photo: createVectorAvatar("#0284c7") },
+      { name: "Gemma Arenas", photo: createVectorAvatar("#d946ef") },
+      { name: "Luis Alberto", photo: createVectorAvatar("#059669") },
+      { name: "Eliud Kipchoge", photo: createVectorAvatar("#f59e0b") }
+    ];
+
+    let ridersData = [];
+
+    // Load saved riders from localStorage or initialize with defaults
+    function loadRidersData() {
+      const saved = localStorage.getItem('proride_riders_custom');
+      if (saved) {
+        try {
+          ridersData = JSON.parse(saved);
+        } catch(e) {
+          ridersData = [...DEFAULT_RIDERS];
+        }
+      } else {
+        ridersData = JSON.parse(JSON.stringify(DEFAULT_RIDERS));
+      }
+    }
+
+    function saveRidersData() {
+      localStorage.setItem('proride_riders_custom', JSON.stringify(ridersData));
+    }
+
+    // Game Engine State Variables
+    let cards = [];
+    let selectedIndices = [];
+    let currentStreak = 0;
+    let resetCount = 0;
+    let isProcessing = false;
+
+    // Timer Variables
+    let timerInterval = null;
+    let startTime = null;
+    let elapsedTime = 0;
+
+    // DOM References
+    const cardGrid = document.getElementById('card-grid');
+    const timerDisplay = document.getElementById('timer-display');
+    const streakDisplay = document.getElementById('streak-display');
+    const resetsDisplay = document.getElementById('resets-display');
+    const bestDisplay = document.getElementById('best-display');
+    const statusBanner = document.getElementById('status-banner');
+    const victoryModal = document.getElementById('victory-modal');
+    const settingsModal = document.getElementById('settings-modal');
+    const ridersList = document.getElementById('riders-list');
+
+    // Timer Controller Functions
+    function startTimer() {
+      if (timerInterval) return;
+      startTime = Date.now() - elapsedTime;
+      timerInterval = setInterval(() => {
+        elapsedTime = Date.now() - startTime;
+        const totalSecs = elapsedTime / 1000;
+        const mins = String(Math.floor(totalSecs / 60)).padStart(2, '0');
+        const secs = String(Math.floor(totalSecs % 60)).padStart(2, '0');
+        const tenths = Math.floor((elapsedTime % 1000) / 100);
+        timerDisplay.textContent = `${mins}:${secs}.${tenths}`;
+      }, 50);
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    function resetTimer() {
+      stopTimer();
+      elapsedTime = 0;
+      timerDisplay.textContent = '00:00.0';
+    }
+
+    function initGameSession() {
+      resetTimer();
+      currentStreak = 0;
+      resetCount = 0;
+      selectedIndices = [];
+      isProcessing = false;
+
+      streakDisplay.textContent = '0/18';
+      resetsDisplay.textContent = '0';
+      statusBanner.className = "w-full max-w-lg py-2 px-3 bg-slate-900/90 border border-slate-800 rounded-xl text-center text-xs font-semibold text-slate-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
+      statusBanner.innerHTML = "<span>Partida inicialitzada. Clica una casella per començar!</span>";
+
+      // Build 36 cards (18 photo cards, 18 name cards)
+      let rawDeck = [];
+      ridersData.forEach((runner, idx) => {
+        rawDeck.push({ runnerId: idx, type: 'name', content: runner.name });
+        rawDeck.push({ runnerId: idx, type: 'photo', content: runner.photo });
+      });
+
+      // SHUFFLE ONCE PER GAME SESSION (Positions stay fixed on error)
+      cards = shuffleArray(rawDeck).map((item, index) => ({
+        ...item,
+        gridIndex: index,
+        isFlipped: false
+      }));
+
+      renderBoard();
+    }
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderBoard() {
+      cardGrid.innerHTML = '';
+      cards.forEach((card, idx) => {
+        const cardContainer = document.createElement('div');
+        cardContainer.className = 'card perspective-1000 w-full h-full cursor-pointer';
+
+        cardContainer.innerHTML = `
+          <div id="card-inner-${idx}" class="card-inner w-full h-full relative transform-style-3d rounded-xl shadow-md border border-slate-800">
+            <!-- Back Face (Closed) -->
+            <div class="card-face backface-hidden absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/60 rounded-xl flex items-center justify-center">
+              <span class="text-[9px] sm:text-xs font-black tracking-widest text-slate-500/80">PRO</span>
+            </div>
+            <!-- Front Face (Revealed) -->
+            <div class="card-face backface-hidden rotate-y-180 absolute inset-0 bg-slate-900 border-2 border-amber-500/80 rounded-xl flex flex-col items-center justify-center p-1 text-center overflow-hidden">
+              ${card.type === 'photo' 
+                ? `<img src="${card.content}" class="w-full h-full object-cover rounded-lg" alt="Foto" />` 
+                : `<span class="text-[9px] sm:text-xs font-extrabold leading-tight text-slate-100">${card.content}</span>`}
+            </div>
+          </div>
+        `;
+
+        cardContainer.addEventListener('click', () => handleCardClick(idx));
+        cardGrid.appendChild(cardContainer);
+      });
+    }
+
+    function handleCardClick(index) {
+      sound.init();
+      if (isProcessing) return;
+
+      const card = cards[index];
+      if (card.isFlipped) return;
+
+      startTimer();
+      sound.playClick();
+
+      // Flip card
+      card.isFlipped = true;
+      const cardInner = document.getElementById(`card-inner-${index}`);
+      cardInner.parentElement.classList.add('flipped');
+
+      selectedIndices.push(index);
+
+      if (selectedIndices.length === 2) {
+        checkPair();
+      }
+    }
+
+    function checkPair() {
+      isProcessing = true;
+      const idx1 = selectedIndices[0];
+      const idx2 = selectedIndices[1];
+      const card1 = cards[idx1];
+      const card2 = cards[idx2];
+
+      if (card1.runnerId === card2.runnerId) {
+        // MATCH FOUND
+        sound.playMatch();
+        currentStreak++;
+        streakDisplay.textContent = `${currentStreak}/18`;
+
+        selectedIndices = [];
+        isProcessing = false;
+
+        if (currentStreak === 18) {
+          handleVictory();
+        }
+      } else {
+        // MISMATCH -> STRICT ZERO-ERROR RESET (Positions remain fixed!)
+        sound.playError();
+        resetCount++;
+        resetsDisplay.textContent = resetCount;
+
+        statusBanner.className = "w-full max-w-lg py-2 px-3 bg-rose-500/20 border border-rose-500/50 rounded-xl text-center text-xs font-black text-rose-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
+        statusBanner.innerHTML = "<span>FALLADA! Es tanca tot el panell... Les posicions NO canvien!</span>";
+        cardGrid.classList.add('shake');
+
+        setTimeout(() => {
+          cardGrid.classList.remove('shake');
+          
+          // Flip EVERY card face down
+          cards.forEach((c, i) => {
+            c.isFlipped = false;
+            const cardInner = document.getElementById(`card-inner-${i}`);
+            if (cardInner) {
+              cardInner.parentElement.classList.remove('flipped');
+            }
+          });
+
+          // Reset streak to zero
+          currentStreak = 0;
+          streakDisplay.textContent = '0/18';
+
+          selectedIndices = [];
+          isProcessing = false;
+
+          statusBanner.className = "w-full max-w-lg py-2 px-3 bg-slate-900/90 border border-slate-800 rounded-xl text-center text-xs font-semibold text-slate-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
+          statusBanner.innerHTML = "<span>Comença la seqüència de nou! Totes les caselles continuen igual.</span>";
+        }, 850);
+      }
+    }
+
+    function handleVictory() {
+      stopTimer();
+      sound.playWin();
+
+      const finalTimeStr = timerDisplay.textContent;
+      document.getElementById('final-time').textContent = finalTimeStr;
+      document.getElementById('final-resets').textContent = resetCount;
+
+      const prevBest = localStorage.getItem('proride_best');
+      if (!prevBest || elapsedTime < parseInt(prevBest, 10)) {
+        localStorage.setItem('proride_best', elapsedTime);
+        bestDisplay.textContent = finalTimeStr;
+      }
+
+      victoryModal.classList.remove('opacity-0', 'pointer-events-none');
+      document.getElementById('victory-card').classList.remove('scale-95');
+    }
+
+    function loadBestScore() {
+      const prevBest = localStorage.getItem('proride_best');
+      if (prevBest) {
+        const totalSecs = parseInt(prevBest, 10) / 1000;
+        const mins = String(Math.floor(totalSecs / 60)).padStart(2, '0');
+        const secs = String(Math.floor(totalSecs % 60)).padStart(2, '0');
+        const tenths = Math.floor((parseInt(prevBest, 10) % 1000) / 100);
+        bestDisplay.textContent = `${mins}:${secs}.${tenths}`;
+      }
+    }
+
+    // Settings & File Upload Logic
+    function renderSettingsList() {
+      ridersList.innerHTML = '';
+      ridersData.forEach((r, idx) => {
+        const item = document.createElement('div');
+        item.className = 'flex flex-col sm:flex-row items-center gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800';
+        item.innerHTML = `
+          <span class="w-6 text-slate-500 font-extrabold text-center">${idx + 1}.</span>
+          <div class="w-10 h-10 bg-slate-900 rounded-lg border border-slate-700 flex-shrink-0 overflow-hidden flex items-center justify-center">
+            <img src="${r.photo}" id="preview-img-${idx}" class="w-full h-full object-cover" alt="Preview" />
+          </div>
+          <input type="text" value="${r.name}" data-idx="${idx}" class="rider-name-input flex-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs focus:outline-none focus:border-amber-500" placeholder="Nom del corredor" />
+          <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3 py-2 rounded-lg text-[11px] font-bold flex items-center gap-1.5 whitespace-nowrap w-full sm:w-auto justify-center">
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Carregar Imatge
+            <input type="file" accept="image/png, image/jpeg, image/webp" data-idx="${idx}" class="rider-file-input hidden" />
+          </label>
+        `;
+        ridersList.appendChild(item);
+      });
+
+      // Bind file input listeners for PNG/JPG local upload
+      document.querySelectorAll('.rider-file-input').forEach(input => {
+        input.addEventListener('change', (e) => {
+          const idx = parseInt(e.target.dataset.idx, 10);
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+              ridersData[idx].photo = evt.target.result; // Base64 Data URL
+              document.getElementById(`preview-img-${idx}`).src = evt.target.result;
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      });
+    }
+
+    // Modal Events
+    document.getElementById('btn-settings').addEventListener('click', () => {
+      renderSettingsList();
+      settingsModal.classList.remove('opacity-0', 'pointer-events-none');
+    });
+
+    document.getElementById('btn-close-settings').addEventListener('click', () => {
+      settingsModal.classList.add('opacity-0', 'pointer-events-none');
+    });
+
+    document.getElementById('btn-save-settings').addEventListener('click', () => {
+      const inputs = document.querySelectorAll('.rider-name-input');
+      inputs.forEach(input => {
+        const idx = parseInt(input.dataset.idx, 10);
+        if (input.value.trim() !== '') {
+          ridersData[idx].name = input.value.trim();
+        }
+      });
+      saveRidersData();
+      settingsModal.classList.add('opacity-0', 'pointer-events-none');
+      initGameSession();
+    });
+
+    document.getElementById('btn-reset-default').addEventListener('click', () => {
+      if (confirm("Vols restablir els noms i imatges per defecte?")) {
+        ridersData = JSON.parse(JSON.stringify(DEFAULT_RIDERS));
+        saveRidersData();
+        renderSettingsList();
+      }
+    });
+
+    document.getElementById('btn-restart').addEventListener('click', () => {
+      sound.init();
+      initGameSession();
+    });
+
+    document.getElementById('btn-modal-restart').addEventListener('click', () => {
+      victoryModal.classList.add('opacity-0', 'pointer-events-none');
+      document.getElementById('victory-card').classList.add('scale-95');
+      initGameSession();
+    });
+
+    // Window Init
+    window.onload = () => {
+      loadRidersData();
+      loadBestScore();
+      initGameSession();
+    };
+  </script>
+</body>
+</html>
