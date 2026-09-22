@@ -247,32 +247,30 @@
 
     const sound = new SoundController();
 
-    // Default 19 Runners Data with inline SVG Vector Avatars as fallbacks
-    function createVectorAvatar(color) {
-      return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="${encodeURIComponent(color)}" fill-opacity="0.25" stroke="${encodeURIComponent(color)}" stroke-width="3"/><circle cx="32" cy="22" r="10" fill="${encodeURIComponent(color)}"/><path d="M16 50C16 41.1634 23.1634 34 32 34C40.8366 34 48 41.1634 48 50V52H16V50Z" fill="${encodeURIComponent(color)}"/></svg>`;
-    }
+    // Default Fallback Avatar in case an image fails or is missing
+    const DEFAULT_AVATAR = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="%23f43f5e" fill-opacity="0.25" stroke="%23f43f5e" stroke-width="3"/><circle cx="32" cy="22" r="10" fill="%23f43f5e"/><path d="M16 50C16 41.1634 23.1634 34 32 34C40.8366 34 48 41.1634 48 50V52H16V50Z" fill="%23f43f5e"/></svg>`;
 
+    // Default 19 Runners Data - Assignant imatges locals (.png)
     const DEFAULT_RIDERS = [
-      { name: "Òliver Serra", photo: MiquelM.png("#3b82f6") },
-      { name: "Martí Collell", photo: MiquelM.png("#eab308") },
-      { name: "Pau Rodoreda", photo: MiquelM.png("#ef4444") },
-      { name: "Oriol Fornell", photo: MiquelM.png("#ec4899") },
-      { name: "Lluc Bayés", photo: createVectorAvatar("#10b981") },
-      { name: "Martí Miró", photo: createVectorAvatar("#a855f7") },
-      { name: "Héctor González", photo: createVectorAvatar("#f97316") },
-      { name: "Pol Ruz", photo: createVectorAvatar("#06b6d4") },
-      { name: "Axel Serrano", photo: createVectorAvatar("#84cc16") },
-      { name: "Miquel Martín", photo: createVectorAvatar("#f43f5e") },
-      { name: "Pau Enrique", photo: createVectorAvatar("#6366f1") },
-      { name: "Marc Danti", photo: createVectorAvatar("#14b8a6") },
-      { name: "Ángel Rojo", photo: createVectorAvatar("#d97706") },
-      { name: "Adrià Vilanova", photo: createVectorAvatar("#8b5cf6") },
-      { name: "Bernat Muñoz", photo: createVectorAvatar("#0284c7") },
-      { name: "Eloi Vilaró", photo: createVectorAvatar("#d946ef") },
-      { name: "Oriol Barniol", photo: createVectorAvatar("#059669") },
-      { name: "Roc Andreu", photo: createVectorAvatar("#f59e0b") }
-      { name: "Marc Quatrecasas", photo: createVectorAvatar("#f59e0b") }
-
+      { name: "Òliver Serra", photo: "OliverS.png" },
+      { name: "Martí Collell", photo: "MartiC.png" },
+      { name: "Pau Rodoreda", photo: "PauR.png" },
+      { name: "Oriol Fornell", photo: "OriolF.png" },
+      { name: "Lluc Bayés", photo: "LlucB.png" },
+      { name: "Martí Miró", photo: "MartiM.png" },
+      { name: "Héctor González", photo: "HectorG.png" },
+      { name: "Pol Ruz", photo: "PolR.png" },
+      { name: "Axel Serrano", photo: "AxelS.png" },
+      { name: "Miquel Martín", photo: "MiquelM.png" },
+      { name: "Pau Enrique", photo: "PauE.png" },
+      { name: "Marc Danti", photo: "MarcD.png" },
+      { name: "Ángel Rojo", photo: "AngelR.png" },
+      { name: "Adrià Vilanova", photo: "AdriaV.png" },
+      { name: "Bernat Muñoz", photo: "BernatM.png" },
+      { name: "Eloi Vilaró", photo: "EloiV.png" },
+      { name: "Oriol Barniol", photo: "OriolB.png" },
+      { name: "Roc Andreu", photo: "RocA.png" },
+      { name: "Marc Quatrecasas", photo: "MarcQ.png" }
     ];
 
     let ridersData = [];
@@ -399,7 +397,7 @@
             <!-- Front Face (Revealed) -->
             <div class="card-face backface-hidden rotate-y-180 absolute inset-0 bg-slate-900 border-2 border-amber-500/80 rounded-xl flex flex-col items-center justify-center p-1 text-center overflow-hidden">
               ${card.type === 'photo' 
-                ? `<img src="${card.content}" class="w-full h-full object-cover rounded-lg" alt="Foto" />` 
+                ? `<img src="${card.content}" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}';" class="w-full h-full object-cover rounded-lg" alt="Foto" />` 
                 : `<span class="text-[9px] sm:text-xs font-extrabold leading-tight text-slate-100">${card.content}</span>`}
             </div>
           </div>
@@ -524,7 +522,7 @@
         item.innerHTML = `
           <span class="w-6 text-slate-500 font-extrabold text-center">${idx + 1}.</span>
           <div class="w-10 h-10 bg-slate-900 rounded-lg border border-slate-700 flex-shrink-0 overflow-hidden flex items-center justify-center">
-            <img src="${r.photo}" id="preview-img-${idx}" class="w-full h-full object-cover" alt="Preview" />
+            <img src="${r.photo}" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}';" id="preview-img-${idx}" class="w-full h-full object-cover" alt="Preview" />
           </div>
           <input type="text" value="${r.name}" data-idx="${idx}" class="rider-name-input flex-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs focus:outline-none focus:border-amber-500" placeholder="Nom del corredor" />
           <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3 py-2 rounded-lg text-[11px] font-bold flex items-center gap-1.5 whitespace-nowrap w-full sm:w-auto justify-center">
