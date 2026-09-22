@@ -6,36 +6,13 @@
   <title>ProRide 2025-26</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * {
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .perspective-1000 {
-      perspective: 1000px;
-    }
-
-    .transform-style-3d {
-      transform-style: preserve-3d;
-    }
-
-    .backface-hidden {
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-    }
-
-    .rotate-y-180 {
-      transform: rotateY(180deg);
-    }
-
-    .card-inner {
-      transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
-    }
-
-    .card.flipped .card-inner {
-      transform: rotateY(180deg);
-    }
-
+    * { user-select: none; -webkit-tap-highlight-color: transparent; }
+    .perspective-1000 { perspective: 1000px; }
+    .transform-style-3d { transform-style: preserve-3d; }
+    .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+    .card-inner { transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1); }
+    .card.flipped .card-inner { transform: rotateY(180deg); }
     @keyframes shakeAnimation {
       0%, 100% { transform: translateX(0); }
       20% { transform: translateX(-8px); }
@@ -43,21 +20,7 @@
       60% { transform: translateX(-5px); }
       80% { transform: translateX(5px); }
     }
-
-    .shake {
-      animation: shakeAnimation 0.4s ease-in-out;
-    }
-
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #0f172a;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 4px;
-    }
+    .shake { animation: shakeAnimation 0.4s ease-in-out; }
   </style>
 </head>
 <body class="min-h-full flex flex-col justify-between items-center bg-slate-950 text-slate-100 p-2 sm:p-4 font-sans overflow-x-hidden">
@@ -101,176 +64,52 @@
   <!-- Game Grid Container -->
   <main class="w-full max-w-3xl my-auto flex items-center justify-center p-2 sm:p-3 bg-slate-900/50 border border-slate-800/80 rounded-2xl shadow-2xl relative">
     <div id="card-grid" class="w-full grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-1.5 sm:gap-2">
-      <!-- 42 Cards + 2 Banner spaces generated via JS -->
     </div>
   </main>
 
   <!-- Controls Footer -->
   <footer class="w-full max-w-3xl mt-3 mb-1 flex gap-2">
-    <button id="btn-restart" class="w-full py-3 px-4 bg-amber-500 hover:bg-amber-400 active:scale-[0.98] text-slate-950 font-black rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 text-sm">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+    <button id="btn-restart" class="w-full py-3 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl shadow-lg shadow-amber-500/20 transition-all text-sm">
       Nova Partida (Barrejar)
-    </button>
-    <button id="btn-settings" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 font-bold rounded-xl border border-slate-700 transition-all flex items-center justify-center gap-2 text-sm whitespace-nowrap">
-      <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-      Configurar Corredors
     </button>
   </footer>
 
   <!-- Victory Modal -->
   <div id="victory-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md text-center shadow-2xl transform scale-95 transition-transform duration-300" id="victory-card">
-      <div class="w-16 h-16 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-400">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-      </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md text-center shadow-2xl">
       <h2 class="text-2xl font-black text-white mb-1">VICTÒRIA PRORIDE!</h2>
-      <p class="text-xs text-slate-400 mb-4">Has trobat les 21 parelles sense cap error final.</p>
-
-      <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 mb-6 space-y-2 text-sm">
-        <div class="flex justify-between items-center">
-          <span class="text-slate-400">Temps total:</span>
-          <span id="final-time" class="font-mono font-extrabold text-cyan-400 text-base">00:00.0</span>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="text-slate-400">Errors (Panells tancats):</span>
-          <span id="final-resets" class="font-mono font-extrabold text-rose-400 text-base">0</span>
-        </div>
-      </div>
-
-      <button id="btn-modal-restart" class="w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/20 transition-all text-sm">
+      <p class="text-xs text-slate-400 mb-4">Has trobat les 21 parelles!</p>
+      <button id="btn-modal-restart" class="w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-sm">
         Tornar a Jugar
       </button>
     </div>
   </div>
 
-  <!-- Settings Modal -->
-  <div id="settings-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 w-full max-w-xl shadow-2xl max-h-[90vh] flex flex-col">
-      <div class="flex items-center justify-between mb-2">
-        <h2 class="text-lg sm:text-xl font-black text-white">Configurar Corredors (21)</h2>
-        <button id="btn-reset-default" class="text-[11px] font-bold text-amber-400 hover:underline">Restablir Valors</button>
-      </div>
-      <p class="text-xs text-slate-400 mb-4">Canvia els noms i penja les imatges PNG/JPG directament des del teu dispositiu.</p>
-
-      <div id="riders-list" class="overflow-y-auto space-y-3 pr-1 flex-1 text-xs">
-      </div>
-
-      <div class="mt-4 pt-3 border-t border-slate-800 flex gap-2">
-        <button id="btn-save-settings" class="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl transition-all text-xs sm:text-sm shadow-lg shadow-amber-500/20">
-          Guardar i Reiniciar Partida
-        </button>
-        <button id="btn-close-settings" class="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl transition-all text-xs sm:text-sm">
-          Tancar
-        </button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    class SoundController {
-      constructor() {
-        this.ctx = null;
-      }
-
-      init() {
-        if (!this.ctx) {
-          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-      }
-
-      playClick() {
-        if (!this.ctx) return;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(420, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(850, this.ctx.currentTime + 0.05);
-        gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.05);
-      }
-
-      playMatch() {
-        if (!this.ctx) return;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
-        osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.08);
-        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.25);
-      }
-
-      playError() {
-        if (!this.ctx) return;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(220, this.ctx.currentTime);
-        osc.frequency.setValueAtTime(130, this.ctx.currentTime + 0.12);
-        gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.3);
-      }
-
-      playWin() {
-        if (!this.ctx) return;
-        const notes = [523.25, 659.25, 783.99, 1046.50];
-        notes.forEach((freq, idx) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.1);
-          gain.gain.setValueAtTime(0.2, this.ctx.currentTime + idx * 0.1);
-          gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + idx * 0.1 + 0.2);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(this.ctx.currentTime + idx * 0.1);
-          osc.stop(this.ctx.currentTime + idx * 0.1 + 0.2);
-        });
-      }
-    }
-
-    const sound = new SoundController();
-
-    const DEFAULT_AVATAR = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="%23f43f5e" fill-opacity="0.25" stroke="%23f43f5e" stroke-width="3"/><circle cx="32" cy="22" r="10" fill="%23f43f5e"/><path d="M16 50C16 41.1634 23.1634 34 32 34C40.8366 34 48 41.1634 48 50V52H16V50Z" fill="%23f43f5e"/></svg>`;
-
-    // Pega aquí las cadenas "data:image/png;base64,..." que obtengas de la conversión de tus imágenes.
-    const DEFAULT_RIDERS = [
-      { name: "Òliver Serra", photo: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMwAAAEKCAYAAABe5LrvAAABY2lDQ1BrQ0dDb2xvclNwYWNlRGlzcGxheVAzAAAokX2QsUvDUBDGv1aloHUQHRwcMolDlJIKuji0FURxCFXB6pS+pqmQxkeSIgU3/4GC/4EKzm4Whzo6OAiik+jm5KTgouV5L4mkInqP435877vjOCA5bnBu9wOoO75bXMorm6UtJfWMBL0gDObxnK6vSv6uP+P9PvTeTstZv///jcGK6TGqn5QZxl0fSKjE+p7PJe8Tj7m0FHFLshXyieRyyOeBZ71YIL4mVljNqBC/EKvlHt3q4brdYNEOcvu06WysyTmUE1jEDjxw2DDQhAId2T/8s4G/gF1yN+FSn4UafOrJkSInmMTLcMAwA5VYQ4ZSk3eO7ncX3U+NtYMnYKEjhLiItZUOcDZHJ2vH2tQ8MDIEXLW54RqB1EeZrFaB11NguASM3lDPtlfNauH26Tww8CjE2ySQOgS6LSE+joToHlPzA3DpfAEDp2ITpJYOWwAAAARjSUNQDA0AAW4D4+8AAACWZVhJZk1NACoAAAAIAAUBEgADAAAAAQABAAABGgAFAAAAAQAAAEoBGwAFAAAAAQAAAFIBKAADAAAAAQACAACHaQAEAAAAAQAAAFoAAAAAAAAAkAAAAAEAAACQAAAAAQADkoYABwAAABIAAACEoAIABAAAAAEAAADMoAMABAAAAAEAAAEKAAAAAEFTQ0lJAAAAU2NyZWVuc2hvdLNVOEsAAAAJcEhZcwAAFiUAABYlAUlSJPAAAALXaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJYTVAgQ29yZSA2LjAuMCI+CiAgIDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CiAgICAgIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiCiAgICAgICAgICAgIHhtbG5zOmV4aWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vZXhpZi8xLjAvIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDxleGlmOlBpeGVsWERpbWVuc2lvbj4yMDQ8L2V4aWY6UGl4ZWxYRGltZW5zaW9uPgogICAgICAgICA8ZXhpZjpVc2VyQ29tbWVudD5TY3JlZW5zaG90PC9leGlmOlVzZXJDb21tZW50PgogICAgICAgICA8ZXhpZjpQaXhlbFlEaW1lbnNpb24+MjY2PC9leGlmOlBpeGVsWURpbWVuc2lvbj4KICAgICAgICAgPHRpZmY6UmVzb2x1dGlvblVuaXQ+MjwvdGlmZjpSZXNvbHV0aW9uVW5pdD4KICAgICAgICAgPHRpZmY6WVJlc29sdXRpb24+MTQ0PC90aWZmOllSZXNvbHV0aW9uPgogICAgICAgICA8dGlmZjpYUmVzb2x1dGlvbj4xNDQ8L3RpZmY6WFJlc29sdXRpb24+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgrJHMWEAABAAElEQVR4AVzdWXMj2bKm5yAIgnNmVtXe3UdtGrplupDJTPoNupTp/1/JTGprDX323lWVA5MzSEDP65F5jkzMigIJICLWcvfP57Xi5H/9n/+X49evd8vd3dOy2V4slzc3y8cPt8un26vl9upi+eXTzfLrr5+Wjx9vlw8fPiwXt7fL2eXVcnp+uSynZ8v7crLsDyfLy9txed4fHG/L636/vL+9Lsv767I9eVnON/tlt3nz+2HZnCzLxnmnZ67hONleLoflbDkcT5Y313k7HJa398Pysn9dnh4fl6eH++X++7fl4fvX5cnx+nS/nG42y6UxnO2ulsPJmXO2y/vJzrXOXXM9trtez3znbDnfbR2ny257spwZx+nhZdku+2W7WZbd6eteX33O3f31/v/f3/v7N4//+/+/f+/8f88f/8D/P2f//9f8/39/33/83d3+9f//937/8/f79/v/+f5x/3P/e////f9z+f/z9///n/f78/v9///f+z/f/z+f//z/v8z+/e////3f///8f/x3//e83v37v/3e83b8=" },
-      { name: "Martí Collell", photo: "https://hipocamp.github.io/Memory/MartiC.png" },
-      { name: "Pau Rodoreda", photo: "https://hipocamp.github.io/Memory/PauR.png" },
-      { name: "Oriol Fornell", photo: "https://hipocamp.github.io/Memory/OriolF.png" },
-      { name: "Lluc Bayés", photo: "https://hipocamp.github.io/Memory/LlucB.png" },
-      { name: "Martí Miró", photo: "https://hipocamp.github.io/Memory/MartiM.png" },
-      { name: "Héctor González", photo: "https://hipocamp.github.io/Memory/HectorG.png" },
-      { name: "Pol Ruz", photo: "https://hipocamp.github.io/Memory/PolR.png" },
-      { name: "Axel Serrano", photo: "https://hipocamp.github.io/Memory/AxelS.png" },
-      { name: "Miquel Martín", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Pau Enrique", photo: "https://hipocamp.github.io/Memory/PauE.png" },
-      { name: "Marc Danti", photo: "https://hipocamp.github.io/Memory/MarcD.png" },
-      { name: "Ángel Rojo", photo: "https://hipocamp.github.io/Memory/AngelR.png" },
-      { name: "Adrià Vilanova", photo: "https://hipocamp.github.io/Memory/AdriaV.png" },
-      { name: "Bernat Muñoz", photo: "https://hipocamp.github.io/Memory/BernatM.png" },
-      { name: "Eloi Vilaró", photo: "https://hipocamp.github.io/Memory/EloiV.png" },
-      { name: "Oriol Barniol", photo: "https://hipocamp.github.io/Memory/OriolB.png" },
-      { name: "Roc Andreu", photo: "https://hipocamp.github.io/Memory/RocA.png" },
-      { name: "Marc Quatrecasas", photo: "https://hipocamp.github.io/Memory/MarcQ.png" },
-      { name: "Joan Pujol", photo: "https://hipocamp.github.io/Memory/JoanP.png" },
-      { name: "David López", photo: "https://hipocamp.github.io/Memory/DavidL.png" }
+    // Noms dels corredors i els seus fitxers d'imatge locals
+    const RIDERS = [
+      { name: "Òliver Serra", photo: "MiquelM.png" },
+      { name: "Martí Collell", photo: "MiquelM.png" },
+      { name: "Pau Rodoreda", photo: "MiquelM.png" },
+      { name: "Oriol Fornell", photo: "MiquelM.png" },
+      { name: "Lluc Bayés", photo: "MiquelM.png" },
+      { name: "Martí Miró", photo: "MiquelM.png" },
+      { name: "Héctor González", photo: "MiquelM.png" },
+      { name: "Pol Ruz", photo: "MiquelM.png" },
+      { name: "Axel Serrano", photo: "MiquelM.png },
+      { name: "Miquel Martín", photo: "MiquelM.png" },
+      { name: "Pau Enrique", photo: "MiquelM.png" },
+      { name: "Marc Danti", photo: "MiquelM.png" },
+      { name: "Ángel Rojo", photo: "MiquelM.png" },
+      { name: "Adrià Vilanova", photo: "MiquelM.png" },
+      { name: "Bernat Muñoz", photo: "MiquelM.png" },
+      { name: "Eloi Vilaró", photo: "MiquelM.png" },
+      { name: "Oriol Barniol", photo: "MiquelM.png" },
+      { name: "Roc Andreu", photo: "RocA.png" },
+      { name: "Marc Quatrecasas", photo: "MarcQ.png" },
+      { name: "Joan Pujol", photo: "JoanP.png" },
+      { name: "David López", photo: "DavidL.png" }
     ];
-
-    let ridersData = JSON.parse(JSON.stringify(DEFAULT_RIDERS));
 
     let cards = [];
     let selectedIndices = [];
@@ -278,46 +117,11 @@
     let resetCount = 0;
     let isProcessing = false;
 
-    let timerInterval = null;
-    let startTime = null;
-    let elapsedTime = 0;
-
     const cardGrid = document.getElementById('card-grid');
-    const timerDisplay = document.getElementById('timer-display');
     const streakDisplay = document.getElementById('streak-display');
     const resetsDisplay = document.getElementById('resets-display');
-    const bestDisplay = document.getElementById('best-display');
-    const statusBanner = document.getElementById('status-banner');
-    const victoryModal = document.getElementById('victory-modal');
-    const settingsModal = document.getElementById('settings-modal');
-    const ridersList = document.getElementById('riders-list');
-
-    function startTimer() {
-      if (timerInterval) return;
-      startTime = Date.now() - elapsedTime;
-      timerInterval = setInterval(() => {
-        elapsedTime = Date.now() - startTime;
-        const totalSecs = elapsedTime / 1000;
-        const mins = String(Math.floor(totalSecs / 60)).padStart(2, '0');
-        const secs = String(Math.floor(totalSecs % 60)).padStart(2, '0');
-        const tenths = Math.floor((elapsedTime % 1000) / 100);
-        timerDisplay.textContent = `${mins}:${secs}.${tenths}`;
-      }, 50);
-    }
-
-    function stopTimer() {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-
-    function resetTimer() {
-      stopTimer();
-      elapsedTime = 0;
-      timerDisplay.textContent = '00:00.0';
-    }
 
     function initGameSession() {
-      resetTimer();
       currentStreak = 0;
       resetCount = 0;
       selectedIndices = [];
@@ -325,11 +129,9 @@
 
       streakDisplay.textContent = '0/21';
       resetsDisplay.textContent = '0';
-      statusBanner.className = "w-full max-w-3xl py-2 px-3 bg-slate-900/90 border border-slate-800 rounded-xl text-center text-xs font-semibold text-slate-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
-      statusBanner.innerHTML = "<span>Partida inicialitzada. Clica una casella per començar!</span>";
 
       let rawDeck = [];
-      ridersData.forEach((runner, idx) => {
+      RIDERS.forEach((runner, idx) => {
         rawDeck.push({ runnerId: idx, type: 'name', content: runner.name });
         rawDeck.push({ runnerId: idx, type: 'photo', content: runner.photo });
       });
@@ -360,14 +162,14 @@
         cardContainer.className = 'card perspective-1000 w-full aspect-[3/4] cursor-pointer';
 
         cardContainer.innerHTML = `
-          <div id="card-inner-${idx}" class="card-inner w-full h-full relative transform-style-3d rounded-lg sm:rounded-xl shadow-md border border-slate-800">
-            <div class="card-face backface-hidden absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/60 rounded-lg sm:rounded-xl flex items-center justify-center">
-              <span class="text-[8px] sm:text-xs font-black tracking-widest text-slate-500/80">PRO</span>
+          <div id="card-inner-${idx}" class="card-inner w-full h-full relative transform-style-3d rounded-lg shadow-md border border-slate-800">
+            <div class="card-face backface-hidden absolute inset-0 bg-slate-800 border border-slate-700/60 rounded-lg flex items-center justify-center">
+              <span class="text-[8px] sm:text-xs font-black text-slate-500">PRO</span>
             </div>
-            <div class="card-face backface-hidden rotate-y-180 absolute inset-0 bg-slate-900 border-2 border-amber-500/80 rounded-lg sm:rounded-xl flex flex-col items-center justify-center p-0.5 sm:p-1 text-center overflow-hidden">
+            <div class="card-face backface-hidden rotate-y-180 absolute inset-0 bg-slate-900 border-2 border-amber-500/80 rounded-lg flex flex-col items-center justify-center p-0.5 text-center overflow-hidden">
               ${card.type === 'photo' 
-                ? `<img src="${card.content}" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}';" class="w-full h-full object-cover rounded-md" alt="Foto" />` 
-                : `<span class="text-[8px] sm:text-xs font-extrabold leading-tight text-slate-100 px-0.5">${card.content}</span>`}
+                ? `<img src="${card.content}" class="w-full h-full object-cover rounded-md" alt="${card.content}" />` 
+                : `<span class="text-[8px] sm:text-xs font-extrabold text-slate-100 px-0.5">${card.content}</span>`}
             </div>
           </div>
         `;
@@ -376,25 +178,18 @@
         cardGrid.appendChild(cardContainer);
       });
 
+      // Banner "El millor equip del món"
       const bannerTile = document.createElement('div');
-      bannerTile.className = 'col-span-2 w-full aspect-[6/4] sm:aspect-auto sm:h-full bg-gradient-to-r from-amber-500/20 via-amber-400/10 to-amber-500/20 border-2 border-amber-500/40 rounded-lg sm:rounded-xl flex items-center justify-center p-2 text-center shadow-lg';
-      bannerTile.innerHTML = `
-        <span class="text-[10px] sm:text-xs md:text-sm font-black tracking-wide text-amber-300 uppercase leading-tight drop-shadow-md">
-          El millor equip del món
-        </span>
-      `;
+      bannerTile.className = 'col-span-2 w-full aspect-[6/4] sm:aspect-auto sm:h-full bg-amber-500/20 border-2 border-amber-500/40 rounded-lg flex items-center justify-center p-2 text-center';
+      bannerTile.innerHTML = `<span class="text-[10px] sm:text-xs font-black text-amber-300 uppercase">El millor equip del món</span>`;
       cardGrid.appendChild(bannerTile);
     }
 
     function handleCardClick(index) {
-      sound.init();
       if (isProcessing) return;
 
       const card = cards[index];
       if (card.isFlipped) return;
-
-      startTimer();
-      sound.playClick();
 
       card.isFlipped = true;
       const cardInner = document.getElementById(`card-inner-${index}`);
@@ -415,28 +210,21 @@
       const card2 = cards[idx2];
 
       if (card1.runnerId === card2.runnerId) {
-        sound.playMatch();
         currentStreak++;
         streakDisplay.textContent = `${currentStreak}/21`;
-
         selectedIndices = [];
         isProcessing = false;
 
         if (currentStreak === 21) {
-          handleVictory();
+          document.getElementById('victory-modal').classList.remove('opacity-0', 'pointer-events-none');
         }
       } else {
-        sound.playError();
         resetCount++;
         resetsDisplay.textContent = resetCount;
-
-        statusBanner.className = "w-full max-w-3xl py-2 px-3 bg-rose-500/20 border border-rose-500/50 rounded-xl text-center text-xs font-black text-rose-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
-        statusBanner.innerHTML = "<span>FALLADA! Es tanca tot el panell... Les posicions NO canvien!</span>";
         cardGrid.classList.add('shake');
 
         setTimeout(() => {
           cardGrid.classList.remove('shake');
-          
           cards.forEach((c, i) => {
             c.isFlipped = false;
             const cardInner = document.getElementById(`card-inner-${i}`);
@@ -447,106 +235,19 @@
 
           currentStreak = 0;
           streakDisplay.textContent = '0/21';
-
           selectedIndices = [];
           isProcessing = false;
-
-          statusBanner.className = "w-full max-w-3xl py-2 px-3 bg-slate-900/90 border border-slate-800 rounded-xl text-center text-xs font-semibold text-slate-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
-          statusBanner.innerHTML = "<span>Comença la seqüència de nou! Totes les caselles continuen igual.</span>";
         }, 850);
       }
     }
 
-    function handleVictory() {
-      stopTimer();
-      sound.playWin();
-
-      const finalTimeStr = timerDisplay.textContent;
-      document.getElementById('final-time').textContent = finalTimeStr;
-      document.getElementById('final-resets').textContent = resetCount;
-
-      victoryModal.classList.remove('opacity-0', 'pointer-events-none');
-      document.getElementById('victory-card').classList.remove('scale-95');
-    }
-
-    function renderSettingsList() {
-      ridersList.innerHTML = '';
-      ridersData.forEach((r, idx) => {
-        const item = document.createElement('div');
-        item.className = 'flex flex-col sm:flex-row items-center gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800';
-        item.innerHTML = `
-          <span class="w-6 text-slate-500 font-extrabold text-center">${idx + 1}.</span>
-          <div class="w-10 h-10 bg-slate-900 rounded-lg border border-slate-700 flex-shrink-0 overflow-hidden flex items-center justify-center">
-            <img src="${r.photo}" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}';" id="preview-img-${idx}" class="w-full h-full object-cover" alt="Preview" />
-          </div>
-          <input type="text" value="${r.name}" data-idx="${idx}" class="rider-name-input flex-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white text-xs focus:outline-none focus:border-amber-500" placeholder="Nom del corredor" />
-          <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3 py-2 rounded-lg text-[11px] font-bold flex items-center gap-1.5 whitespace-nowrap w-full sm:w-auto justify-center">
-            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            Carregar Imatge
-            <input type="file" accept="image/png, image/jpeg, image/webp" data-idx="${idx}" class="rider-file-input hidden" />
-          </label>
-        `;
-        ridersList.appendChild(item);
-      });
-
-      document.querySelectorAll('.rider-file-input').forEach(input => {
-        input.addEventListener('change', (e) => {
-          const idx = parseInt(e.target.dataset.idx, 10);
-          const file = e.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-              ridersData[idx].photo = evt.target.result;
-              document.getElementById(`preview-img-${idx}`).src = evt.target.result;
-            };
-            reader.readAsDataURL(file);
-          }
-        });
-      });
-    }
-
-    document.getElementById('btn-settings').addEventListener('click', () => {
-      renderSettingsList();
-      settingsModal.classList.remove('opacity-0', 'pointer-events-none');
-    });
-
-    document.getElementById('btn-close-settings').addEventListener('click', () => {
-      settingsModal.classList.add('opacity-0', 'pointer-events-none');
-    });
-
-    document.getElementById('btn-save-settings').addEventListener('click', () => {
-      const inputs = document.querySelectorAll('.rider-name-input');
-      inputs.forEach(input => {
-        const idx = parseInt(input.dataset.idx, 10);
-        if (input.value.trim() !== '') {
-          ridersData[idx].name = input.value.trim();
-        }
-      });
-      settingsModal.classList.add('opacity-0', 'pointer-events-none');
-      initGameSession();
-    });
-
-    document.getElementById('btn-reset-default').addEventListener('click', () => {
-      if (confirm("Vols restablir els noms i imatges per defecte?")) {
-        ridersData = JSON.parse(JSON.stringify(DEFAULT_RIDERS));
-        renderSettingsList();
-      }
-    });
-
-    document.getElementById('btn-restart').addEventListener('click', () => {
-      sound.init();
-      initGameSession();
-    });
-
+    document.getElementById('btn-restart').addEventListener('click', initGameSession);
     document.getElementById('btn-modal-restart').addEventListener('click', () => {
-      victoryModal.classList.add('opacity-0', 'pointer-events-none');
-      document.getElementById('victory-card').classList.add('scale-95');
+      document.getElementById('victory-modal').classList.add('opacity-0', 'pointer-events-none');
       initGameSession();
     });
 
-    window.onload = () => {
-      initGameSession();
-    };
+    window.onload = initGameSession;
   </script>
 </body>
 </html>
