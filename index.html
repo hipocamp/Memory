@@ -6,13 +6,36 @@
   <title>ProRide 2025-26</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * { user-select: none; -webkit-tap-highlight-color: transparent; }
-    .perspective-1000 { perspective: 1000px; }
-    .transform-style-3d { transform-style: preserve-3d; }
-    .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-    .rotate-y-180 { transform: rotateY(180deg); }
-    .card-inner { transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1); }
-    .card.flipped .card-inner { transform: rotateY(180deg); }
+    * {
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+
+    .backface-hidden {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+
+    .card-inner {
+      transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+    }
+
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
     @keyframes shakeAnimation {
       0%, 100% { transform: translateX(0); }
       20% { transform: translateX(-8px); }
@@ -20,7 +43,10 @@
       60% { transform: translateX(-5px); }
       80% { transform: translateX(5px); }
     }
-    .shake { animation: shakeAnimation 0.4s ease-in-out; }
+
+    .shake {
+      animation: shakeAnimation 0.4s ease-in-out;
+    }
   </style>
 </head>
 <body class="min-h-full flex flex-col justify-between items-center bg-slate-950 text-slate-100 p-2 sm:p-4 font-sans overflow-x-hidden">
@@ -63,48 +89,140 @@
 
   <!-- Game Grid Container -->
   <main class="w-full max-w-3xl my-auto flex items-center justify-center p-2 sm:p-3 bg-slate-900/50 border border-slate-800/80 rounded-2xl shadow-2xl relative">
-    <div id="card-grid" class="w-full grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-1.5 sm:gap-2">
+    <div id="card-grid" class="w-full grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
+      <!-- Generat dinàmicament per JS -->
     </div>
   </main>
 
   <!-- Controls Footer -->
   <footer class="w-full max-w-3xl mt-3 mb-1 flex gap-2">
-    <button id="btn-restart" class="w-full py-3 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl shadow-lg shadow-amber-500/20 transition-all text-sm">
+    <button id="btn-restart" class="w-full py-3 px-4 bg-amber-500 hover:bg-amber-400 active:scale-[0.98] text-slate-950 font-black rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 text-sm">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
       Nova Partida (Barrejar)
     </button>
   </footer>
 
   <!-- Victory Modal -->
   <div id="victory-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md text-center shadow-2xl">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md text-center shadow-2xl transform scale-95 transition-transform duration-300" id="victory-card">
+      <div class="w-16 h-16 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-400">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+      </div>
       <h2 class="text-2xl font-black text-white mb-1">VICTÒRIA PRORIDE!</h2>
       <p class="text-xs text-slate-400 mb-4">Has trobat les 21 parelles!</p>
-      <button id="btn-modal-restart" class="w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-sm">
+
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 mb-6 space-y-2 text-sm">
+        <div class="flex justify-between items-center">
+          <span class="text-slate-400">Temps total:</span>
+          <span id="final-time" class="font-mono font-extrabold text-cyan-400 text-base">00:00.0</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-slate-400">Errors (Panells tancats):</span>
+          <span id="final-resets" class="font-mono font-extrabold text-rose-400 text-base">0</span>
+        </div>
+      </div>
+
+      <button id="btn-modal-restart" class="w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/20 transition-all text-sm">
         Tornar a Jugar
       </button>
     </div>
   </div>
 
   <script>
-    // Noms dels corredors i els seus fitxers d'imatge locals
+    class SoundController {
+      constructor() {
+        this.ctx = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+      }
+
+      playClick() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(420, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(850, this.ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.05);
+      }
+
+      playMatch() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
+        osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.25);
+      }
+
+      playError() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+        osc.frequency.setValueAtTime(130, this.ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.3);
+      }
+
+      playWin() {
+        if (!this.ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.1);
+          gain.gain.setValueAtTime(0.2, this.ctx.currentTime + idx * 0.1);
+          gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + idx * 0.1 + 0.2);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(this.ctx.currentTime + idx * 0.1);
+          osc.stop(this.ctx.currentTime + idx * 0.1 + 0.2);
+        });
+      }
+    }
+
+    const sound = new SoundController();
+
     const RIDERS = [
-      { name: "Òliver Serra", photo: "MiquelM.png" },
-      { name: "Martí Collell", photo: "MiquelM.png" },
-      { name: "Pau Rodoreda", photo: "MiquelM.png" },
-      { name: "Oriol Fornell", photo: "MiquelM.png" },
-      { name: "Lluc Bayés", photo: "MiquelM.png" },
-      { name: "Martí Miró", photo: "MiquelM.png" },
-      { name: "Héctor González", photo: "MiquelM.png" },
-      { name: "Pol Ruz", photo: "MiquelM.png" },
-      { name: "Axel Serrano", photo: "MiquelM.png },
+      { name: "Òliver Serra", photo: "OliverS.png" },
+      { name: "Martí Collell", photo: "MartiC.png" },
+      { name: "Pau Rodoreda", photo: "PauR.png" },
+      { name: "Oriol Fornell", photo: "OriolF.png" },
+      { name: "Lluc Bayés", photo: "LlucB.png" },
+      { name: "Martí Miró", photo: "MartiM.png" },
+      { name: "Héctor González", photo: "HectorG.png" },
+      { name: "Pol Ruz", photo: "PolR.png" },
+      { name: "Axel Serrano", photo: "AxelS.png" },
       { name: "Miquel Martín", photo: "MiquelM.png" },
-      { name: "Pau Enrique", photo: "MiquelM.png" },
-      { name: "Marc Danti", photo: "MiquelM.png" },
-      { name: "Ángel Rojo", photo: "MiquelM.png" },
-      { name: "Adrià Vilanova", photo: "MiquelM.png" },
-      { name: "Bernat Muñoz", photo: "MiquelM.png" },
-      { name: "Eloi Vilaró", photo: "MiquelM.png" },
-      { name: "Oriol Barniol", photo: "MiquelM.png" },
+      { name: "Pau Enrique", photo: "PauE.png" },
+      { name: "Marc Danti", photo: "MarcD.png" },
+      { name: "Ángel Rojo", photo: "AngelR.png" },
+      { name: "Adrià Vilanova", photo: "AdriaV.png" },
+      { name: "Bernat Muñoz", photo: "BernatM.png" },
+      { name: "Eloi Vilaró", photo: "EloiV.png" },
+      { name: "Oriol Barniol", photo: "OriolB.png" },
       { name: "Roc Andreu", photo: "RocA.png" },
       { name: "Marc Quatrecasas", photo: "MarcQ.png" },
       { name: "Joan Pujol", photo: "JoanP.png" },
@@ -117,11 +235,44 @@
     let resetCount = 0;
     let isProcessing = false;
 
+    let timerInterval = null;
+    let startTime = null;
+    let elapsedTime = 0;
+
     const cardGrid = document.getElementById('card-grid');
+    const timerDisplay = document.getElementById('timer-display');
     const streakDisplay = document.getElementById('streak-display');
     const resetsDisplay = document.getElementById('resets-display');
+    const bestDisplay = document.getElementById('best-display');
+    const statusBanner = document.getElementById('status-banner');
+    const victoryModal = document.getElementById('victory-modal');
+
+    function startTimer() {
+      if (timerInterval) return;
+      startTime = Date.now() - elapsedTime;
+      timerInterval = setInterval(() => {
+        elapsedTime = Date.now() - startTime;
+        const totalSecs = elapsedTime / 1000;
+        const mins = String(Math.floor(totalSecs / 60)).padStart(2, '0');
+        const secs = String(Math.floor(totalSecs % 60)).padStart(2, '0');
+        const tenths = Math.floor((elapsedTime % 1000) / 100);
+        timerDisplay.textContent = `${mins}:${secs}.${tenths}`;
+      }, 50);
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    function resetTimer() {
+      stopTimer();
+      elapsedTime = 0;
+      timerDisplay.textContent = '00:00.0';
+    }
 
     function initGameSession() {
+      resetTimer();
       currentStreak = 0;
       resetCount = 0;
       selectedIndices = [];
@@ -129,6 +280,8 @@
 
       streakDisplay.textContent = '0/21';
       resetsDisplay.textContent = '0';
+      statusBanner.className = "w-full max-w-3xl py-2 px-3 bg-slate-900/90 border border-slate-800 rounded-xl text-center text-xs font-semibold text-slate-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
+      statusBanner.innerHTML = "<span>Partida inicialitzada. Clica una casella per començar!</span>";
 
       let rawDeck = [];
       RIDERS.forEach((runner, idx) => {
@@ -159,17 +312,20 @@
       
       cards.forEach((card, idx) => {
         const cardContainer = document.createElement('div');
-        cardContainer.className = 'card perspective-1000 w-full aspect-[3/4] cursor-pointer';
+        // Estil corregit amb aspect-ratio i alçada mínima per garantir visibilitat
+        cardContainer.className = 'card perspective-1000 w-full aspect-[3/4] min-h-[70px] sm:min-h-[90px] cursor-pointer';
 
         cardContainer.innerHTML = `
-          <div id="card-inner-${idx}" class="card-inner w-full h-full relative transform-style-3d rounded-lg shadow-md border border-slate-800">
-            <div class="card-face backface-hidden absolute inset-0 bg-slate-800 border border-slate-700/60 rounded-lg flex items-center justify-center">
-              <span class="text-[8px] sm:text-xs font-black text-slate-500">PRO</span>
+          <div id="card-inner-${idx}" class="card-inner w-full h-full relative transform-style-3d rounded-lg sm:rounded-xl shadow-md border border-slate-800">
+            <!-- Back Face (Closed) -->
+            <div class="card-face backface-hidden absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/60 rounded-lg sm:rounded-xl flex items-center justify-center">
+              <span class="text-[9px] sm:text-xs font-black tracking-widest text-slate-500/80">PRO</span>
             </div>
-            <div class="card-face backface-hidden rotate-y-180 absolute inset-0 bg-slate-900 border-2 border-amber-500/80 rounded-lg flex flex-col items-center justify-center p-0.5 text-center overflow-hidden">
+            <!-- Front Face (Revealed) -->
+            <div class="card-face backface-hidden rotate-y-180 absolute inset-0 bg-slate-900 border-2 border-amber-500/80 rounded-lg sm:rounded-xl flex flex-col items-center justify-center p-0.5 sm:p-1 text-center overflow-hidden">
               ${card.type === 'photo' 
-                ? `<img src="${card.content}" class="w-full h-full object-cover rounded-md" alt="${card.content}" />` 
-                : `<span class="text-[8px] sm:text-xs font-extrabold text-slate-100 px-0.5">${card.content}</span>`}
+                ? `<img src="${card.content}" class="w-full h-full object-cover rounded-md" alt="Foto" />` 
+                : `<span class="text-[9px] sm:text-xs font-extrabold leading-tight text-slate-100 px-0.5">${card.content}</span>`}
             </div>
           </div>
         `;
@@ -178,18 +334,26 @@
         cardGrid.appendChild(cardContainer);
       });
 
-      // Banner "El millor equip del món"
+      // Targeta "El millor equip del món"
       const bannerTile = document.createElement('div');
-      bannerTile.className = 'col-span-2 w-full aspect-[6/4] sm:aspect-auto sm:h-full bg-amber-500/20 border-2 border-amber-500/40 rounded-lg flex items-center justify-center p-2 text-center';
-      bannerTile.innerHTML = `<span class="text-[10px] sm:text-xs font-black text-amber-300 uppercase">El millor equip del món</span>`;
+      bannerTile.className = 'col-span-2 w-full aspect-[6/4] sm:aspect-auto sm:h-full min-h-[70px] bg-gradient-to-r from-amber-500/20 via-amber-400/10 to-amber-500/20 border-2 border-amber-500/40 rounded-lg sm:rounded-xl flex items-center justify-center p-2 text-center shadow-lg';
+      bannerTile.innerHTML = `
+        <span class="text-[10px] sm:text-xs md:text-sm font-black tracking-wide text-amber-300 uppercase leading-tight drop-shadow-md">
+          El millor equip del món
+        </span>
+      `;
       cardGrid.appendChild(bannerTile);
     }
 
     function handleCardClick(index) {
+      sound.init();
       if (isProcessing) return;
 
       const card = cards[index];
       if (card.isFlipped) return;
+
+      startTimer();
+      sound.playClick();
 
       card.isFlipped = true;
       const cardInner = document.getElementById(`card-inner-${index}`);
@@ -210,21 +374,28 @@
       const card2 = cards[idx2];
 
       if (card1.runnerId === card2.runnerId) {
+        sound.playMatch();
         currentStreak++;
         streakDisplay.textContent = `${currentStreak}/21`;
+
         selectedIndices = [];
         isProcessing = false;
 
         if (currentStreak === 21) {
-          document.getElementById('victory-modal').classList.remove('opacity-0', 'pointer-events-none');
+          handleVictory();
         }
       } else {
+        sound.playError();
         resetCount++;
         resetsDisplay.textContent = resetCount;
+
+        statusBanner.className = "w-full max-w-3xl py-2 px-3 bg-rose-500/20 border border-rose-500/50 rounded-xl text-center text-xs font-black text-rose-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
+        statusBanner.innerHTML = "<span>FALLADA! Es tanca tot el panell... Les posicions NO canvien!</span>";
         cardGrid.classList.add('shake');
 
         setTimeout(() => {
           cardGrid.classList.remove('shake');
+          
           cards.forEach((c, i) => {
             c.isFlipped = false;
             const cardInner = document.getElementById(`card-inner-${i}`);
@@ -235,19 +406,42 @@
 
           currentStreak = 0;
           streakDisplay.textContent = '0/21';
+
           selectedIndices = [];
           isProcessing = false;
+
+          statusBanner.className = "w-full max-w-3xl py-2 px-3 bg-slate-900/90 border border-slate-800 rounded-xl text-center text-xs font-semibold text-slate-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
+          statusBanner.innerHTML = "<span>Comença la seqüència de nou! Totes les caselles continuen igual.</span>";
         }, 850);
       }
     }
 
-    document.getElementById('btn-restart').addEventListener('click', initGameSession);
-    document.getElementById('btn-modal-restart').addEventListener('click', () => {
-      document.getElementById('victory-modal').classList.add('opacity-0', 'pointer-events-none');
+    function handleVictory() {
+      stopTimer();
+      sound.playWin();
+
+      const finalTimeStr = timerDisplay.textContent;
+      document.getElementById('final-time').textContent = finalTimeStr;
+      document.getElementById('final-resets').textContent = resetCount;
+
+      victoryModal.classList.remove('opacity-0', 'pointer-events-none');
+      document.getElementById('victory-card').classList.remove('scale-95');
+    }
+
+    document.getElementById('btn-restart').addEventListener('click', () => {
+      sound.init();
       initGameSession();
     });
 
-    window.onload = initGameSession;
+    document.getElementById('btn-modal-restart').addEventListener('click', () => {
+      victoryModal.classList.add('opacity-0', 'pointer-events-none');
+      document.getElementById('victory-card').classList.add('scale-95');
+      initGameSession();
+    });
+
+    window.onload = () => {
+      initGameSession();
+    };
   </script>
 </body>
 </html>
