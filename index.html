@@ -61,10 +61,10 @@
     }
   </style>
 </head>
-<body class="h-full flex flex-col justify-between items-center bg-slate-950 text-slate-100 p-2 sm:p-4 font-sans overflow-x-hidden">
+<body class="min-h-full flex flex-col justify-between items-center bg-slate-950 text-slate-100 p-2 sm:p-4 font-sans overflow-x-hidden">
 
   <!-- Header -->
-  <header class="w-full max-w-xl text-center pt-2 pb-1">
+  <header class="w-full max-w-2xl text-center pt-2 pb-1">
     <div class="flex items-center justify-center gap-2">
       <span class="inline-block p-1.5 bg-amber-500/20 text-amber-400 rounded-lg border border-amber-500/30">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -75,7 +75,7 @@
   </header>
 
   <!-- Dashboard / Stats -->
-  <div class="w-full max-w-xl grid grid-cols-4 gap-2 my-2 text-center">
+  <div class="w-full max-w-2xl grid grid-cols-4 gap-2 my-2 text-center">
     <div class="bg-slate-900 border border-slate-800 rounded-xl p-2 flex flex-col items-center justify-center">
       <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Temps</span>
       <span id="timer-display" class="text-base sm:text-lg font-extrabold font-mono text-cyan-400">00:00.0</span>
@@ -95,19 +95,19 @@
   </div>
 
   <!-- Status Banner -->
-  <div id="status-banner" class="w-full max-w-xl py-2 px-3 bg-slate-900/90 border border-slate-800 rounded-xl text-center text-xs font-semibold text-slate-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]">
+  <div id="status-banner" class="w-full max-w-2xl py-2 px-3 bg-slate-900/90 border border-slate-800 rounded-xl text-center text-xs font-semibold text-slate-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]">
     <span>Clica una casella per iniciar el cronòmetre</span>
   </div>
 
-  <!-- Game Grid Container -->
-  <main class="w-full max-w-xl my-auto flex items-center justify-center p-1.5 sm:p-2 bg-slate-900/50 border border-slate-800/80 rounded-2xl shadow-2xl relative min-h-[380px]">
-    <div id="card-grid" class="w-full h-full grid grid-cols-6 sm:grid-cols-8 gap-1.5 sm:gap-2">
+  <!-- Game Grid Container (Ajustat per a 38 cartes) -->
+  <main class="w-full max-w-2xl my-auto flex items-center justify-center p-2 sm:p-3 bg-slate-900/50 border border-slate-800/80 rounded-2xl shadow-2xl relative">
+    <div id="card-grid" class="w-full grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 gap-1.5 sm:gap-2">
       <!-- 38 Cards generated via JS -->
     </div>
   </main>
 
   <!-- Controls Footer -->
-  <footer class="w-full max-w-xl mt-2 mb-1 flex gap-2">
+  <footer class="w-full max-w-2xl mt-3 mb-1 flex gap-2">
     <button id="btn-restart" class="w-full py-3 px-4 bg-amber-500 hover:bg-amber-400 active:scale-[0.98] text-slate-950 font-black rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 text-sm">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
       Nova Partida (Barrejar)
@@ -170,7 +170,6 @@
 
   <!-- JavaScript Game Engine -->
   <script>
-    // Audio Controller (Web Audio API)
     class SoundController {
       constructor() {
         this.ctx = null;
@@ -247,10 +246,10 @@
 
     const sound = new SoundController();
 
-    // Default Fallback Avatar in case an image fails or is missing
+    // Default Fallback Avatar amb SVG directament
     const DEFAULT_AVATAR = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="%23f43f5e" fill-opacity="0.25" stroke="%23f43f5e" stroke-width="3"/><circle cx="32" cy="22" r="10" fill="%23f43f5e"/><path d="M16 50C16 41.1634 23.1634 34 32 34C40.8366 34 48 41.1634 48 50V52H16V50Z" fill="%23f43f5e"/></svg>`;
 
-    // Default 19 Runners Data - Assignant imatges locals (.png)
+    // Default 19 Runners Data - Imatges PNG locals
     const DEFAULT_RIDERS = [
       { name: "Òliver Serra", photo: "OliverS.png" },
       { name: "Martí Collell", photo: "MartiC.png" },
@@ -275,7 +274,6 @@
 
     let ridersData = [];
 
-    // Load saved riders from localStorage or initialize with defaults
     function loadRidersData() {
       const saved = localStorage.getItem('proride_riders_custom');
       if (saved) {
@@ -296,19 +294,16 @@
       localStorage.setItem('proride_riders_custom', JSON.stringify(ridersData));
     }
 
-    // Game Engine State Variables
     let cards = [];
     let selectedIndices = [];
     let currentStreak = 0;
     let resetCount = 0;
     let isProcessing = false;
 
-    // Timer Variables
     let timerInterval = null;
     let startTime = null;
     let elapsedTime = 0;
 
-    // DOM References
     const cardGrid = document.getElementById('card-grid');
     const timerDisplay = document.getElementById('timer-display');
     const streakDisplay = document.getElementById('streak-display');
@@ -319,7 +314,6 @@
     const settingsModal = document.getElementById('settings-modal');
     const ridersList = document.getElementById('riders-list');
 
-    // Timer Controller Functions
     function startTimer() {
       if (timerInterval) return;
       startTime = Date.now() - elapsedTime;
@@ -353,17 +347,15 @@
 
       streakDisplay.textContent = '0/19';
       resetsDisplay.textContent = '0';
-      statusBanner.className = "w-full max-w-xl py-2 px-3 bg-slate-900/90 border border-slate-800 rounded-xl text-center text-xs font-semibold text-slate-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
+      statusBanner.className = "w-full max-w-2xl py-2 px-3 bg-slate-900/90 border border-slate-800 rounded-xl text-center text-xs font-semibold text-slate-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
       statusBanner.innerHTML = "<span>Partida inicialitzada. Clica una casella per començar!</span>";
 
-      // Build 38 cards (19 photo cards, 19 name cards)
       let rawDeck = [];
       ridersData.forEach((runner, idx) => {
         rawDeck.push({ runnerId: idx, type: 'name', content: runner.name });
         rawDeck.push({ runnerId: idx, type: 'photo', content: runner.photo });
       });
 
-      // SHUFFLE ONCE PER GAME SESSION (Positions stay fixed on error)
       cards = shuffleArray(rawDeck).map((item, index) => ({
         ...item,
         gridIndex: index,
@@ -386,19 +378,20 @@
       cardGrid.innerHTML = '';
       cards.forEach((card, idx) => {
         const cardContainer = document.createElement('div');
-        cardContainer.className = 'card perspective-1000 w-full h-20 sm:h-24 cursor-pointer';
+        // Aspect ratio flexible per garantir que la casella sempre sigui visible
+        cardContainer.className = 'card perspective-1000 w-full aspect-[3/4] cursor-pointer';
 
         cardContainer.innerHTML = `
-          <div id="card-inner-${idx}" class="card-inner w-full h-full relative transform-style-3d rounded-xl shadow-md border border-slate-800">
+          <div id="card-inner-${idx}" class="card-inner w-full h-full relative transform-style-3d rounded-lg sm:rounded-xl shadow-md border border-slate-800">
             <!-- Back Face (Closed) -->
-            <div class="card-face backface-hidden absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/60 rounded-xl flex items-center justify-center">
-              <span class="text-[9px] sm:text-xs font-black tracking-widest text-slate-500/80">PRO</span>
+            <div class="card-face backface-hidden absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/60 rounded-lg sm:rounded-xl flex items-center justify-center">
+              <span class="text-[8px] sm:text-xs font-black tracking-widest text-slate-500/80">PRO</span>
             </div>
             <!-- Front Face (Revealed) -->
-            <div class="card-face backface-hidden rotate-y-180 absolute inset-0 bg-slate-900 border-2 border-amber-500/80 rounded-xl flex flex-col items-center justify-center p-1 text-center overflow-hidden">
+            <div class="card-face backface-hidden rotate-y-180 absolute inset-0 bg-slate-900 border-2 border-amber-500/80 rounded-lg sm:rounded-xl flex flex-col items-center justify-center p-0.5 sm:p-1 text-center overflow-hidden">
               ${card.type === 'photo' 
-                ? `<img src="${card.content}" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}';" class="w-full h-full object-cover rounded-lg" alt="Foto" />` 
-                : `<span class="text-[9px] sm:text-xs font-extrabold leading-tight text-slate-100">${card.content}</span>`}
+                ? `<img src="${card.content}" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}';" class="w-full h-full object-cover rounded-md" alt="Foto" />` 
+                : `<span class="text-[8px] sm:text-xs font-extrabold leading-tight text-slate-100 px-0.5">${card.content}</span>`}
             </div>
           </div>
         `;
@@ -418,7 +411,6 @@
       startTimer();
       sound.playClick();
 
-      // Flip card
       card.isFlipped = true;
       const cardInner = document.getElementById(`card-inner-${index}`);
       cardInner.parentElement.classList.add('flipped');
@@ -438,7 +430,6 @@
       const card2 = cards[idx2];
 
       if (card1.runnerId === card2.runnerId) {
-        // MATCH FOUND
         sound.playMatch();
         currentStreak++;
         streakDisplay.textContent = `${currentStreak}/19`;
@@ -450,19 +441,17 @@
           handleVictory();
         }
       } else {
-        // MISMATCH -> STRICT ZERO-ERROR RESET (Positions remain fixed!)
         sound.playError();
         resetCount++;
         resetsDisplay.textContent = resetCount;
 
-        statusBanner.className = "w-full max-w-xl py-2 px-3 bg-rose-500/20 border border-rose-500/50 rounded-xl text-center text-xs font-black text-rose-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
+        statusBanner.className = "w-full max-w-2xl py-2 px-3 bg-rose-500/20 border border-rose-500/50 rounded-xl text-center text-xs font-black text-rose-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
         statusBanner.innerHTML = "<span>FALLADA! Es tanca tot el panell... Les posicions NO canvien!</span>";
         cardGrid.classList.add('shake');
 
         setTimeout(() => {
           cardGrid.classList.remove('shake');
           
-          // Flip EVERY card face down
           cards.forEach((c, i) => {
             c.isFlipped = false;
             const cardInner = document.getElementById(`card-inner-${i}`);
@@ -471,14 +460,13 @@
             }
           });
 
-          // Reset streak to zero
           currentStreak = 0;
           streakDisplay.textContent = '0/19';
 
           selectedIndices = [];
           isProcessing = false;
 
-          statusBanner.className = "w-full max-w-xl py-2 px-3 bg-slate-900/90 border border-slate-800 rounded-xl text-center text-xs font-semibold text-slate-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
+          statusBanner.className = "w-full max-w-2xl py-2 px-3 bg-slate-900/90 border border-slate-800 rounded-xl text-center text-xs font-semibold text-slate-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
           statusBanner.innerHTML = "<span>Comença la seqüència de nou! Totes les caselles continuen igual.</span>";
         }, 850);
       }
@@ -513,7 +501,6 @@
       }
     }
 
-    // Settings & File Upload Logic
     function renderSettingsList() {
       ridersList.innerHTML = '';
       ridersData.forEach((r, idx) => {
@@ -534,7 +521,6 @@
         ridersList.appendChild(item);
       });
 
-      // Bind file input listeners for PNG/JPG local upload
       document.querySelectorAll('.rider-file-input').forEach(input => {
         input.addEventListener('change', (e) => {
           const idx = parseInt(e.target.dataset.idx, 10);
@@ -542,7 +528,7 @@
           if (file) {
             const reader = new FileReader();
             reader.onload = (evt) => {
-              ridersData[idx].photo = evt.target.result; // Base64 Data URL
+              ridersData[idx].photo = evt.target.result;
               document.getElementById(`preview-img-${idx}`).src = evt.target.result;
             };
             reader.readAsDataURL(file);
@@ -551,7 +537,6 @@
       });
     }
 
-    // Modal Events
     document.getElementById('btn-settings').addEventListener('click', () => {
       renderSettingsList();
       settingsModal.classList.remove('opacity-0', 'pointer-events-none');
@@ -593,7 +578,6 @@
       initGameSession();
     });
 
-    // Window Init
     window.onload = () => {
       loadRidersData();
       loadBestScore();
