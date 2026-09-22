@@ -48,7 +48,6 @@
       animation: shakeAnimation 0.4s ease-in-out;
     }
 
-    /* Custom Scrollbar for Settings */
     ::-webkit-scrollbar {
       width: 6px;
     }
@@ -144,7 +143,7 @@
     </div>
   </div>
 
-  <!-- Settings Modal (Local Image Uploads) -->
+  <!-- Settings Modal -->
   <div id="settings-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-300">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 w-full max-w-xl shadow-2xl max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between mb-2">
@@ -154,7 +153,6 @@
       <p class="text-xs text-slate-400 mb-4">Canvia els noms i penja les imatges PNG/JPG directament des del teu dispositiu.</p>
 
       <div id="riders-list" class="overflow-y-auto space-y-3 pr-1 flex-1 text-xs">
-        <!-- Generated dynamically via JS -->
       </div>
 
       <div class="mt-4 pt-3 border-t border-slate-800 flex gap-2">
@@ -168,7 +166,6 @@
     </div>
   </div>
 
-  <!-- JavaScript Game Engine -->
   <script>
     class SoundController {
       constructor() {
@@ -248,29 +245,29 @@
 
     const DEFAULT_AVATAR = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="%23f43f5e" fill-opacity="0.25" stroke="%23f43f5e" stroke-width="3"/><circle cx="32" cy="22" r="10" fill="%23f43f5e"/><path d="M16 50C16 41.1634 23.1634 34 32 34C40.8366 34 48 41.1634 48 50V52H16V50Z" fill="%23f43f5e"/></svg>`;
 
-    // Default 21 Runners Data
+    // Rutes absolutes directes a GitHub Pages
     const DEFAULT_RIDERS = [
-      { name: "Òliver Serra", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Martí Collell", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Pau Rodoreda", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Oriol Fornell", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Lluc Bayés", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Martí Miró", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Héctor González", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Pol Ruz", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Axel Serrano", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
+      { name: "Òliver Serra", photo: "https://hipocamp.github.io/Memory/MartiM.png" },
+      { name: "Martí Collell", photo: "https://hipocamp.github.io/Memory/MartiM.png" },
+      { name: "Pau Rodoreda", photo: "https://hipocamp.github.io/Memory/MartiM.png" },
+      { name: "Oriol Fornell", photo: "https://hipocamp.github.io/Memory/MartiM.png" },
+      { name: "Lluc Bayés", photo: "https://hipocamp.github.io/Memory/MartiM.png" },
+      { name: "Martí Miró", photo: "https://hipocamp.github.io/Memory/MartiM.png" },
+      { name: "Héctor González", photo: "https://hipocamp.github.io/Memory/MartiM.png" },
+      { name: "Pol Ruz", photo: "https://hipocamp.github.io/Memory/MartiM.png" },
+      { name: "Axel Serrano", photo: "https://hipocamp.github.io/Memory/MartiM.png" },
       { name: "Miquel Martín", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Pau Enrique", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Marc Danti", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Ángel Rojo", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Adrià Vilanova", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Bernat Muñoz", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Eloi Vilaró", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Oriol Barniol", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Roc Andreu", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Marc Quatrecasas", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Abraham Aguilera", photo: "https://hipocamp.github.io/Memory/MiquelM.png" },
-      { name: "Josep Jufré", photo: "https://hipocamp.github.io/Memory/MiquelM.png" }
+      { name: "Pau Enrique", photo: "https://hipocamp.github.io/Memory/MartiM.png" },
+      { name: "Marc Danti", photo: "https://hipocamp.github.io/Memory/MartiM.png" },
+      { name: "Ángel Rojo", photo: "https://hipocamp.github.io/Memory/MartiM.png" },
+      { name: "Adrià Vilanova", photo: "https://hipocamp.github.io/Memory/MartiM.png" },
+      { name: "Bernat Muñoz", photo: "https://hipocamp.github.io/Memory/BernatM.png" },
+      { name: "Eloi Vilaró", photo: "https://hipocamp.github.io/Memory/EloiV.png" },
+      { name: "Oriol Barniol", photo: "https://hipocamp.github.io/Memory/OriolB.png" },
+      { name: "Roc Andreu", photo: "https://hipocamp.github.io/Memory/RocA.png" },
+      { name: "Marc Quatrecasas", photo: "https://hipocamp.github.io/Memory/MarcQ.png" },
+      { name: "Joan Pujol", photo: "https://hipocamp.github.io/Memory/JoanP.png" },
+      { name: "David López", photo: "https://hipocamp.github.io/Memory/DavidL.png" }
     ];
 
     let ridersData = [];
@@ -279,12 +276,16 @@
       const saved = localStorage.getItem('proride_riders_custom');
       if (saved) {
         try {
-          ridersData = JSON.parse(saved);
-          if (ridersData.length < 21) {
+          const parsed = JSON.parse(saved);
+          // Auto-neteja de memòria vella si no té les rutes directes de GitHub
+          if (parsed.length < 21 || !parsed[0].photo.includes('hipocamp.github.io')) {
+            localStorage.removeItem('proride_riders_custom');
             ridersData = JSON.parse(JSON.stringify(DEFAULT_RIDERS));
+          } else {
+            ridersData = parsed;
           }
         } catch(e) {
-          ridersData = [...DEFAULT_RIDERS];
+          ridersData = JSON.parse(JSON.stringify(DEFAULT_RIDERS));
         }
       } else {
         ridersData = JSON.parse(JSON.stringify(DEFAULT_RIDERS));
@@ -378,18 +379,15 @@
     function renderBoard() {
       cardGrid.innerHTML = '';
       
-      // Render de les 42 cartes
       cards.forEach((card, idx) => {
         const cardContainer = document.createElement('div');
         cardContainer.className = 'card perspective-1000 w-full aspect-[3/4] cursor-pointer';
 
         cardContainer.innerHTML = `
           <div id="card-inner-${idx}" class="card-inner w-full h-full relative transform-style-3d rounded-lg sm:rounded-xl shadow-md border border-slate-800">
-            <!-- Back Face (Closed) -->
             <div class="card-face backface-hidden absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/60 rounded-lg sm:rounded-xl flex items-center justify-center">
               <span class="text-[8px] sm:text-xs font-black tracking-widest text-slate-500/80">PRO</span>
             </div>
-            <!-- Front Face (Revealed) -->
             <div class="card-face backface-hidden rotate-y-180 absolute inset-0 bg-slate-900 border-2 border-amber-500/80 rounded-lg sm:rounded-xl flex flex-col items-center justify-center p-0.5 sm:p-1 text-center overflow-hidden">
               ${card.type === 'photo' 
                 ? `<img src="${card.content}" onerror="this.onerror=null; this.src='${DEFAULT_AVATAR}';" class="w-full h-full object-cover rounded-md" alt="Foto" />` 
@@ -402,7 +400,6 @@
         cardGrid.appendChild(cardContainer);
       });
 
-      // Targeta decorativa ocupant les 2 caselles restants (col-span-2)
       const bannerTile = document.createElement('div');
       bannerTile.className = 'col-span-2 w-full aspect-[6/4] sm:aspect-auto sm:h-full bg-gradient-to-r from-amber-500/20 via-amber-400/10 to-amber-500/20 border-2 border-amber-500/40 rounded-lg sm:rounded-xl flex items-center justify-center p-2 text-center shadow-lg';
       bannerTile.innerHTML = `
@@ -573,8 +570,8 @@
 
     document.getElementById('btn-reset-default').addEventListener('click', () => {
       if (confirm("Vols restablir els noms i imatges per defecte?")) {
+        localStorage.removeItem('proride_riders_custom');
         ridersData = JSON.parse(JSON.stringify(DEFAULT_RIDERS));
-        saveRidersData();
         renderSettingsList();
       }
     });
