@@ -171,18 +171,8 @@
       }
 
       playError() {
-        if (!this.ctx) return;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(220, this.ctx.currentTime);
-        osc.frequency.setValueAtTime(130, this.ctx.currentTime + 0.12);
-        gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.3);
+        // Desactivat per sol·licitud: cap so en cas d'error
+        return;
       }
 
       playWin() {
@@ -205,7 +195,6 @@
 
     const sound = new SoundController();
 
-    // Paleta de colors únics per marc per a cadascun dels 21 corredors
     const BORDER_COLORS = [
       "border-red-500", "border-blue-500", "border-emerald-500", "border-amber-400", 
       "border-purple-500", "border-pink-500", "border-cyan-400", "border-orange-500", 
@@ -239,13 +228,13 @@
       { name: "David López", photo: "DavidL.png" }
     ];
 
-    // Funció per calcular les inicials del nom i cognom
+    // Inicials sense punts (ex. MD, OS, PR)
     function getInitials(fullName) {
       const parts = fullName.trim().split(' ');
       if (parts.length >= 2) {
-        return (parts[0][0] + '.' + parts[1][0] + '.').toUpperCase();
+        return (parts[0][0] + parts[1][0]).toUpperCase();
       }
-      return (fullName.substring(0, 2) + '.').toUpperCase();
+      return fullName.substring(0, 2).toUpperCase();
     }
 
     let cards = [];
@@ -353,12 +342,12 @@
             <div class="card-face backface-hidden absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/60 rounded-lg sm:rounded-xl flex items-center justify-center">
               <span class="text-[9px] sm:text-xs font-black tracking-widest text-slate-500/80">PRO</span>
             </div>
-            <!-- Front Face (Revelada amb marc de color únic) -->
+            <!-- Front Face (Revelada) -->
             <div class="card-face backface-hidden rotate-y-180 absolute inset-0 bg-slate-900 border-[3px] ${card.color} rounded-lg sm:rounded-xl flex flex-col items-center justify-center p-0.5 sm:p-1 text-center overflow-hidden">
               ${card.type === 'photo' 
                 ? `<div class="relative w-full h-full overflow-hidden rounded-md">
                      <img src="${card.content}" class="w-full h-full object-cover" alt="Foto" />
-                     <!-- Badge d'inicials a la part inferior de la foto -->
+                     <!-- Badge d'inicials sense punts -->
                      <div class="absolute bottom-0 inset-x-0 bg-slate-950/85 backdrop-blur-xs py-0.5 text-center border-t border-slate-700/50">
                        <span class="text-[9px] sm:text-[11px] font-black tracking-wider text-amber-400">${card.initials}</span>
                      </div>
