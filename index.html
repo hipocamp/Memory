@@ -119,8 +119,8 @@
       <div class="w-16 h-16 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-400">
         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
       </div>
-      <h2 class="text-2xl font-black text-white mb-1">VICTÒRIA PRORIDE!</h2>
-      <p class="text-xs text-slate-400 mb-4">Has trobat les 22 parelles!</p>
+      <h2 id="modal-title" class="text-2xl font-black text-white mb-1">VICTÒRIA PRORIDE!</h2>
+      <p id="modal-subtitle" class="text-xs text-slate-400 mb-4">Has trobat les 22 parelles!</p>
 
       <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 mb-6 space-y-2 text-sm">
         <div class="flex justify-between items-center">
@@ -252,6 +252,7 @@
     let currentStreak = 0;
     let resetCount = 0;
     let isProcessing = false;
+    let isSolvedByButton = false;
 
     let timerInterval = null;
     let startTime = null;
@@ -264,6 +265,7 @@
     const bestDisplay = document.getElementById('best-display');
     const statusBanner = document.getElementById('status-banner');
     const victoryModal = document.getElementById('victory-modal');
+    const btnModalRestart = document.getElementById('btn-modal-restart');
 
     function startTimer() {
       if (timerInterval) return;
@@ -295,6 +297,7 @@
       resetCount = 0;
       selectedIndices = [];
       isProcessing = false;
+      isSolvedByButton = false;
 
       streakDisplay.textContent = '0/22';
       resetsDisplay.textContent = '0';
@@ -457,6 +460,7 @@
 
       currentStreak = 22;
       streakDisplay.textContent = '22/22';
+      isSolvedByButton = true;
 
       statusBanner.className = "w-full max-w-3xl my-1 py-2 px-3 bg-indigo-500/20 border border-indigo-500/50 rounded-xl text-center text-xs font-black text-indigo-300 transition-all duration-300 flex items-center justify-center gap-2 min-h-[36px]";
       statusBanner.innerHTML = "<span>PARTIDA RESOLTA! Totes les caselles s'han destapat.</span>";
@@ -473,6 +477,16 @@
       document.getElementById('final-time').textContent = finalTimeStr;
       document.getElementById('final-resets').textContent = resetCount;
 
+      if (isSolvedByButton) {
+        document.getElementById('modal-title').textContent = "PARTIDA RESOLTA!";
+        document.getElementById('modal-subtitle').textContent = "S'ha mostrat la solució completa del tauler.";
+        btnModalRestart.textContent = "Tancar i veure panell";
+      } else {
+        document.getElementById('modal-title').textContent = "VICTÒRIA PRORIDE!";
+        document.getElementById('modal-subtitle').textContent = "Has trobat les 22 parelles!";
+        btnModalRestart.textContent = "Tornar a Jugar";
+      }
+
       victoryModal.classList.remove('opacity-0', 'pointer-events-none');
       document.getElementById('victory-card').classList.remove('scale-95');
     }
@@ -486,10 +500,14 @@
       solveGame();
     });
 
-    document.getElementById('btn-modal-restart').addEventListener('click', () => {
+    btnModalRestart.addEventListener('click', () => {
       victoryModal.classList.add('opacity-0', 'pointer-events-none');
       document.getElementById('victory-card').classList.add('scale-95');
-      initGameSession();
+      
+      // Si s'ha guanyat jugant normalment, reinicia. Si s'ha usat el botó "Resoldre", només tanca el banner.
+      if (!isSolvedByButton) {
+        initGameSession();
+      }
     });
 
     window.onload = () => {
